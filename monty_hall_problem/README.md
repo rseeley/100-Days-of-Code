@@ -14,4 +14,4 @@ To run this program, first install Python 3 (please don't install Python 2).  Ma
 system's environment variables in the installer (on Windows).
 
 Then, simply open a terminal and type `python .\monty_hall.py {###}` where {###} is the number of times you want to 
-run the simulation.
+run the simulation.  If you don't enter a number, the simulation will run 100 times.
