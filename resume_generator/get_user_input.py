@@ -1,6 +1,4 @@
-name = input('Enter your full name: ')
-
-print('Your name is ' + str(name))
+name = input('Enter your full name: ').strip()
 
 schools = {}
 while True:
@@ -9,8 +7,8 @@ while True:
     if school == 'q':
         break
     else:
-        years = input('Enter a date range for ' + school + ': ')
-        degree = input('Enter your degree from ' + school + ': ')
+        years = input('Enter a date range for ' + school + ': ').strip()
+        degree = input('Enter your degree from ' + school + ': ').strip()
         schools[school] = {
             "Years": years,
             "Degree": degree
