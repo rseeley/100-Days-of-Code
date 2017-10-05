@@ -46,21 +46,26 @@ while True:
         }
 
 
-def mylistprint(l):
+# Prints the values in a list, tabbed once
+# This is used in the dict_print() for job responsibilities
+def list_print(l):
     for i in l:
-        print('\t', i, '\n')
+        print('\t', i)
 
 
-def myprint(d):
+# Recursively prints the key and value of a dictionary
+# In this case, it will print the name of the school/job,
+# years, and degree/responsibilities, respectively
+def dict_print(d):
     for k, v in d.items():
         if isinstance(v, list):
             print(k + ': \n')
-            mylistprint(v)
+            list_print(v)
         elif isinstance(v, dict):
-            myprint(v)
+            dict_print(v)
         else:
             print(f"{k}: {v}")
 
 
-myprint(schools)
-myprint(jobs)
+dict_print(schools)
+dict_print(jobs)
