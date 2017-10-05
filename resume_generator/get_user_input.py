@@ -50,7 +50,7 @@ while True:
 # This is used in the dict_print() for job responsibilities
 def list_print(l):
     for i in l:
-        print('\t', i)
+        print('\t' + i)
 
 
 # Recursively prints the key and value of a dictionary
@@ -59,13 +59,9 @@ def list_print(l):
 def dict_print(d):
     for k, v in d.items():
         if isinstance(v, list):
-            print(k + ': \n')
+            print(k + ':')
             list_print(v)
         elif isinstance(v, dict):
             dict_print(v)
         else:
             print(f"{k}: {v}")
-
-
-dict_print(schools)
-dict_print(jobs)
