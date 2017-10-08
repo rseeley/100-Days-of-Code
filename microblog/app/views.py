@@ -1,12 +1,14 @@
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request, abort
+from flask_login import login_user
 from app import app
+from .models import User
 from .forms import LoginForm
 
 
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'nickname': 'Ryan'}
+    user = {'username': 'Ryan'}
     posts = [
         {
             'author': {'nickname': 'John'},
@@ -27,10 +29,17 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        flash(f'Login requested for OpenID="{form.openid.data}", '
-              f'remember_me={str(form.remember_me.data)}')
+        user = User.query.filter_by(username=form.username).first()
+        login_user(user)
+
+        flash('Logged in successfully.')
+
+        next = request.args.get('next')
+
+        if not is_safe_url(next):
+            return abort(400)
+
         return redirect('/index')
     return render_template('login.html',
                            title='Sign In',
-                           form=form,
-                           providers=app.config['OPENID_PROVIDERS'])
+                           form=form)
