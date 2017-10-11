@@ -19,9 +19,15 @@ class Topic(models.Model):
     subject = models.CharField(max_length=255)
     last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(
-        Board, related_name='topics', on_delete=models.CASCADE)
+        Board,
+        related_name='topics',
+        on_delete=models.CASCADE
+    )
     starter = models.ForeignKey(
-        User, related_name='topics', on_delete=models.SET(get_sentinel_user))
+        User,
+        related_name='topics',
+        on_delete=models.SET(get_sentinel_user)
+    )
 
 
 class Post(models.Model):
@@ -31,7 +37,10 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
     created_by = models.ForeignKey(
-        User, related_name='posts', on_delete=models.SET(get_sentinel_user))
+        User,
+        related_name='posts',
+        on_delete=models.SET(get_sentinel_user)
+    )
     updated_by = models.ForeignKey(
         User,
         null=True,
