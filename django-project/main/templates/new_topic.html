@@ -6,7 +6,7 @@
 	<li class="breadcrumb-item"><a href="{% url 'home' %}">Boards</a></li>
 	<li class="breadcrumb-item"><a href="{% url 'board_topics' board.pk %}">{{ board.name }}</a></li>
 	<li class="breadcrumb-item active">New Topic</li>
-{% endblock %}
+{% endblock breadcrumb %}
 
 {% block content %}
 	<form method="post" novalidate>
@@ -14,4 +14,4 @@
 		{% include 'includes/form.html' %}
 		<button type="submit" class="btn btn-success">Post</button>
 	</form>
-{% endblock %}
+{% endblock content %}
