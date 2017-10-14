@@ -1,0 +1,16 @@
+body {
+	background-image: url(../img/ep_naturalblack.png);
+}
+
+.logo {
+	font-family: 'Raleway', cursive;
+}
+
+.logo a {
+	color: rgba(255, 255, 255,.9);
+}
+
+.logo a:hover,
+.logo a:active {
+	text-decoration: none;
+}
