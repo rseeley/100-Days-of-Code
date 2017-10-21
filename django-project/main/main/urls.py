@@ -32,6 +32,9 @@ urlpatterns = [
         views.topic_posts, name='topic_posts'),
     url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/reply/$',
         views.reply_topic, name='reply_topic'),
+    url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/posts/(?P<post_pk>\d+)/edit/$',
+        views.UpdatePostView.as_view(), name='edit_post'),
+    url(r'^new_post/$', views.NewPostView.as_view(), name='new_post'),
     url(r'^admin/', admin.site.urls),
     url(r'^reset/$', auth_views.PasswordResetView.as_view(
         template_name='password_reset.html',

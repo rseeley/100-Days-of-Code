@@ -1,8 +1,10 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View
+from django.views.generic import CreateView, UpdateView
+from django.urls import reverse_lazy
 from django.db.models import Count
+from django.utils import timezone
 
 from .forms import NewTopicForm, PostForm
 from .models import Board, Topic, Post
@@ -72,6 +74,32 @@ def reply_topic(request, pk, topic_pk):
         form = PostForm()
     context = {'topic': topic, 'form': form}
     return render(request, 'reply_topic.html', context)
+
+
+class NewPostView(CreateView):
+    model = Post
+    form_class = PostForm
+    success_rul = reverse_lazy('post_list')
+    template_name = 'new_post.html'
+
+
+class UpdatePostView(UpdateView):
+    model = Post
+    fields = ('message',)
+    template_name = 'edit_post.html'
+    pk_url_kwarg = 'topic_pk'
+    context_object_name = 'post'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.updated_by = self.request.user
+        post.updated_at = timezone.now()
+        post.save()
+        return redirect(
+            'topic_posts',
+            pk=post.topic.board.pk,
+            topic_pk=post.topic.pk)
+
 
 # class NewTopicView(View):
 #     def __init__(self):
