@@ -1,19 +1,20 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.db.models import Count
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 from .forms import NewTopicForm, PostForm
 from .models import Board, Topic, Post
 
 
-def home(request):
-    boards = Board.objects.all()
-    context = {'boards': boards}
-    return render(request, 'home.html', context)
+class BoardListView(ListView):
+    model = Board
+    context_object_name = 'boards'
+    template_name = 'home.html'
 
 
 def board_topics(request, pk):
@@ -83,12 +84,17 @@ class NewPostView(CreateView):
     template_name = 'new_post.html'
 
 
+@method_decorator(login_required, name='dispatch')
 class UpdatePostView(UpdateView):
     model = Post
     fields = ('message',)
     template_name = 'edit_post.html'
-    pk_url_kwarg = 'topic_pk'
+    pk_url_kwarg = 'post_pk'
     context_object_name = 'post'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(created_by=self.request.user)
 
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -99,31 +105,3 @@ class UpdatePostView(UpdateView):
             'topic_posts',
             pk=post.topic.board.pk,
             topic_pk=post.topic.pk)
-
-
-# class NewTopicView(View):
-#     def __init__(self):
-#         self.board = get_object_or_404(Board, pk=self.pk)
-#         self.user = User.objects.first()
-
-#     def post(self, request):
-#         form = NewTopicForm(request.POST)
-#         if form.is_valid():
-#             topic = form.save(commit=False)
-#             topic.board = self.board
-#             topic.starter = self.user
-#             topic.save()
-
-#             post = Post.objects.create(
-#                 message=form.cleaned_data.get('message'),
-#                 topic=topic,
-#                 created_by=self.user
-#             )
-
-#             return redirect('board_topics', pk=self.board.pk)
-
-#     def get(self, request):
-#         form = NewTopicForm()
-
-#     context = {'board': board, 'form': form}
-#     return render(request, 'new_topic.html', context)
