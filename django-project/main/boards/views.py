@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.db.models import Count
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -73,7 +73,15 @@ def reply_topic(request, pk, topic_pk):
             post.topic = topic
             post.created_by = request.user
             post.save()
-            return redirect('topic_posts', pk=pk, topic_pk=topic_pk)
+
+            topic.last_updated = timezone.now()
+            topic.save()
+
+            topic_url = reverse('topic_posts', kwargs={
+                                'pk': pk, 'topic_pk': topic_pk})
+            topic_post_url = f'{topic_url}?page={topic.get_page_count()}#{post.pk}'
+
+            return redirect(topic_post_url)
     else:
         form = PostForm()
     context = {'topic': topic, 'form': form}
@@ -114,11 +122,16 @@ class PostListView(ListView):
     model = Post
     context_object_name = 'posts'
     template_name = 'topic_posts.html'
-    paginate_by = 2
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
-        self.topic.views += 1
-        self.topic.save()
+        session_key = f'viewed_topic_{self.topic.pk}'
+
+        if not self.request.session.get(session_key, False):
+            self.topic.views += 1
+            self.topic.save()
+            self.request.session[session_key] = True
+
         kwargs['topic'] = self.topic
         return super().get_context_data(**kwargs)
 
